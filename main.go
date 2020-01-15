@@ -9,39 +9,7 @@ import (
 )
 
 func main() {
-	fileMap := make(map[int64][]string)
-
-	//获取该目录下的所有文件
-	allfile := getFilelist("D:/test")
-	for _, file := range allfile {
-		fileMap[GetSize(file)] = append(fileMap[GetSize(file)], file)
-	}
-	for _, v := range fileMap {
-		if len(v) > 1 {
-			uniqueMap := make(map[uint32]string)
-			duplicateFileSlice := []string{}
-			for _, value := range v {
-				// fmt.Println(CRC32(value))
-				crcValue := CRC32(value)
-				_, ok := uniqueMap[crcValue]
-				//if the map key is not exists, then add it to the unqiue map(finalmap)
-				if ok {
-					duplicateFileSlice = append(duplicateFileSlice, value)
-				} else {
-					uniqueMap[crcValue] = value
-				}
-			}
-			// for mk, mv := range uniqueMap {
-			// 	fmt.Printf("%d->%s\n", mk, mv)
-			// }
-			// fmt.Println("--------------------------------")
-			for _, dfsV := range duplicateFileSlice {
-				os.Remove(dfsV)
-				fmt.Printf("已删除文件%v\n", dfsV)
-			}
-		}
-	}
-
+	RemoveDuplicateFile("d:/test")
 }
 
 // CRC32 crc32
@@ -82,4 +50,36 @@ func getFileContent(filename string) []byte {
 		fmt.Println("read file failed, err:", err)
 	}
 	return content
+}
+
+// RemoveDuplicateFile remove duplicate file in thd dir and its suddir
+func RemoveDuplicateFile(path string) {
+	fileMap := make(map[int64][]string)
+
+	//获取该目录下的所有文件
+	allfile := getFilelist(path)
+	for _, file := range allfile {
+		fileMap[GetSize(file)] = append(fileMap[GetSize(file)], file)
+	}
+	for _, v := range fileMap {
+		if len(v) > 1 {
+			uniqueMap := make(map[uint32]string)
+			duplicateFileSlice := []string{}
+			for _, value := range v {
+				// fmt.Println(CRC32(value))
+				crcValue := CRC32(value)
+				_, ok := uniqueMap[crcValue]
+				//if the map key is not exists, then add it to the unqiue map(finalmap)
+				if ok {
+					duplicateFileSlice = append(duplicateFileSlice, value)
+				} else {
+					uniqueMap[crcValue] = value
+				}
+			}
+			for _, dfsV := range duplicateFileSlice {
+				os.Remove(dfsV)
+				fmt.Printf("已删除文件%v\n", dfsV)
+			}
+		}
+	}
 }
