@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	RemoveDuplicateFile("d:/test")
+	RemoveDuplicateFile()
 }
 
 // CRC32 crc32
@@ -53,9 +53,12 @@ func getFileContent(filename string) []byte {
 }
 
 // RemoveDuplicateFile remove duplicate file in thd dir and its suddir
-func RemoveDuplicateFile(path string) {
+func RemoveDuplicateFile() {
 	fileMap := make(map[int64][]string)
-
+	var path string
+	fmt.Println("请输入需要删除重复文件的目录如（d:/test/a）")
+	fmt.Print(">>>")
+	fmt.Scanln(&path)
 	//获取该目录下的所有文件
 	allfile := getFilelist(path)
 	for _, file := range allfile {
@@ -78,7 +81,7 @@ func RemoveDuplicateFile(path string) {
 			}
 			for _, dfsV := range duplicateFileSlice {
 				os.Remove(dfsV)
-				fmt.Printf("已删除文件%v\n", dfsV)
+				fmt.Printf("删除文件%v\n", dfsV)
 			}
 		}
 	}
